@@ -1,19 +1,29 @@
-import React from 'react';
+import ZoomButtons from '@/components/ZoomButtons';
+import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import MapView from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 
 export default function Map() {
+
+  const [zoom, setZoom] = useState(0.01)
   return (
     <View style={styles.container}>
-  <MapView
-    style={styles.map}
-    initialRegion={{
-      latitude: 49.20455850994528,
-      longitude: -0.36739465028753276,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
-    }}//49.20455850994528, -0.36739465028753276
-  />
+      <MapView
+        style={styles.map}
+        region={{  latitude: 49.20455850994528, 
+                          longitude: -0.36739465028753276,
+                          latitudeDelta:zoom , 
+                          longitudeDelta: zoom,}}
+        scrollEnabled={true}  >
+      
+          <Marker coordinate={{latitude: 49.20455850994528,
+                  longitude: -0.36739465028753276}}
+                  title={"title"}
+                  description={"description"}/>
+      </MapView>
+
+      <ZoomButtons zoom={zoom} setZoom={setZoom}/>
+
     </View>
   );
 }
@@ -27,3 +37,12 @@ const styles = StyleSheet.create({
     height: '100%',
   },
 });
+
+const markersGoogle = [
+  {
+    coordinates: {latitude: 49.20455850994528, longitude: -0.36739465028753276},
+    title : "Test",
+    snippet:"test",
+    draggable:true,
+  }
+]
