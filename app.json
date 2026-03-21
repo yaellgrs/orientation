@@ -22,7 +22,13 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.yaellgrs.orientation",
+      "config":{
+        "googleMaps":{
+          "apiKey": "AIzaSyCScUNBmx4FLw-3Z7CwMx98yzSApaBRtvs"
+        }
+      }
     },
     "web": {
       "bundler": "metro",
@@ -30,7 +36,15 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-maps",
+        {
+          "requestLocationPermission": true,
+          "locationPermission": "Allow $(PRODUCT_NAME) to use your location"
+        }
+      ],
+      "expo-image"
     ],
     "experiments": {
       "typedRoutes": true
