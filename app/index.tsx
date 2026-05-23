@@ -1,6 +1,7 @@
 import ZoomButtons from '@/components/ZoomButtons';
-import { getNextPoint } from '@/functions/orientation';
-import React, { useState } from 'react';
+import { getNextPoint, getUserLocation } from '@/functions/orientation';
+import * as Location from 'expo-location';
+import React, { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 
@@ -9,6 +10,20 @@ export default function Map() {
   const [zoom, setZoom] = useState(0.01)
   const [position, setPosition] = useState({latitude : 49.20455850994528, longitude:  -0.36739465028753276});
 
+  /*
+  useEffect(() => { ... }, [])        // une seule fois au montage  = Awake/Start
+  useEffect(() => { ... }, [zoom])    // à chaque fois que zoom change = Update conditionnel
+  useEffect(() => { ... })    
+  */
+  useEffect(() => { //equivalent d'un awake
+    (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') return;
+
+        const userLocation = await getUserLocation();
+        if(userLocation) setPosition(userLocation);
+    })();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -38,7 +53,11 @@ export default function Map() {
       </Pressable>
 
       
-      <Pressable style={styles.reset} onPress={() => {setPosition({latitude:49.20455850994528, longitude:-0.36739465028753276})}}>
+      <Pressable style={styles.reset} onPress={async () => {
+        const userLocation = await getUserLocation();
+        if(userLocation) setPosition(userLocation);
+      }
+    }>
         <Text>RESET</Text>
       </Pressable>
 
