@@ -1,8 +1,8 @@
 import ZoomButtons from '@/components/ZoomButtons';
 import { getNextPoint, getUserLocation } from '@/functions/orientation';
 import * as Location from 'expo-location';
-import React, { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 
 export default function Map() {
@@ -10,6 +10,8 @@ export default function Map() {
   const [zoom, setZoom] = useState(0.01)
   const [position, setPosition] = useState({latitude : 49.20455850994528, longitude:  -0.36739465028753276});
   const [userPosition, setUserPosition] = useState({latitude : 49.20455850994528, longitude:  -0.36739465028753276});
+
+  const mapRef = useRef(null);
 
   /*
   useEffect(() => { ... }, [])        // une seule fois au montage  = Awake/Start
@@ -31,10 +33,7 @@ export default function Map() {
     <View style={styles.container}>
       <MapView
         style={styles.map}
-        region={{  latitude:49.20455850994528, 
-                          longitude: -0.36739465028753276,
-                          latitudeDelta:zoom , 
-                          longitudeDelta: zoom,}}
+        ref={mapRef}
         scrollEnabled
         pitchEnabled
         rotateEnabled  
@@ -62,11 +61,33 @@ export default function Map() {
 
       
       <Pressable style={styles.reset} onPress={async () => {
-        const userLocation = await getUserLocation();
-        if(userLocation) setPosition(userLocation);
-      }
-    }>
+          const userLocation = await getUserLocation();
+          if(userLocation) setPosition(userLocation);
+          }}
+      >
         <Text>RESET</Text>
+      </Pressable>
+
+      <Pressable style={styles.recenter} onPress={ async ()=>{
+          const userLocation = await getUserLocation();
+          if(userLocation){
+            setUserPosition(userLocation);
+            mapRef.current?.animateToRegion({
+              latitude: userLocation.latitude,
+              longitude: userLocation.longitude,
+              latitudeDelta:zoom,
+              longitudeDelta:zoom
+            }, 500);
+            
+          }
+        
+
+          
+      }
+
+
+      }>
+        <Image source={require("@/assets/images/recenter.png")} style={{ width: 30, height: 30 }}/>
       </Pressable>
 
     </View>
@@ -90,7 +111,7 @@ const styles = StyleSheet.create({
     alignItems:"center",
     justifyContent:"center",
     alignSelf:"center",
-    bottom:50,
+    bottom:60,
   },
 
     reset:{
@@ -102,7 +123,17 @@ const styles = StyleSheet.create({
     alignItems:"center",
     justifyContent:"center",
     left:25,
-    bottom:50,
+    bottom:60,
+  },
+  recenter:{
+    borderWidth:1,
+    position:"absolute",
+    width: 50,   // plus grand
+    height: 40,  // plus grand
+    alignItems:"center",
+    justifyContent:"center",
+    right:25,
+    bottom:60,
   },
   outerUserCircle:{
     width : 20,
@@ -116,8 +147,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+
   innerUserCircle:{
-        width : 10,
+    width : 10,
     height: 10,
     borderRadius : 5,
     backgroundColor:"blue"
