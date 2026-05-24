@@ -9,6 +9,7 @@ export default function Map() {
 
   const [zoom, setZoom] = useState(0.01)
   const [position, setPosition] = useState({latitude : 49.20455850994528, longitude:  -0.36739465028753276});
+  const [userPosition, setUserPosition] = useState({latitude : 49.20455850994528, longitude:  -0.36739465028753276});
 
   /*
   useEffect(() => { ... }, [])        // une seule fois au montage  = Awake/Start
@@ -22,6 +23,7 @@ export default function Map() {
 
         const userLocation = await getUserLocation();
         if(userLocation) setPosition(userLocation);
+        if(userLocation) setUserPosition(userLocation);
     })();
   }, []);
 
@@ -44,6 +46,12 @@ export default function Map() {
                   description={"description"}
                     draggable={true}
                   />
+
+          <Marker coordinate={userPosition}> 
+            <View style ={styles.outerUserCircle}>
+              <View style ={styles.innerUserCircle}></View>   
+              </View>        
+          </Marker>
       </MapView>
 
       <ZoomButtons zoom={zoom} setZoom={setZoom}/>
@@ -96,6 +104,24 @@ const styles = StyleSheet.create({
     left:25,
     bottom:50,
   },
+  outerUserCircle:{
+    width : 20,
+    height: 20,
+    borderRadius : 10,
+    backgroundColor:"white",
+    borderWidth: 3,
+
+    borderColor : "blue",
+
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  innerUserCircle:{
+        width : 10,
+    height: 10,
+    borderRadius : 5,
+    backgroundColor:"blue"
+  }
 });
 
 const markersGoogle = [
