@@ -24,7 +24,7 @@ export default function Map() {
       if (status !== 'granted') return;
 
         const userLocation = await getUserLocation();
-        if(userLocation) setPosition(userLocation);
+        if(userLocation) setPosition(getNextPoint(userLocation));
         if(userLocation) setUserPosition(userLocation);
     })();
   }, []);
@@ -62,7 +62,8 @@ export default function Map() {
       
       <Pressable style={styles.reset} onPress={async () => {
           const userLocation = await getUserLocation();
-          if(userLocation) setPosition(userLocation);
+        if(userLocation) setPosition(getNextPoint(userLocation));
+        if(userLocation) setUserPosition(userLocation);
           }}
       >
         <Text>RESET</Text>
