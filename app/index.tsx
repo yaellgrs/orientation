@@ -1,6 +1,7 @@
 import ZoomButtons from '@/components/ZoomButtons';
 import { getNextPoint, getUserLocation } from '@/functions/orientation';
 import * as Location from 'expo-location';
+import { getDistance } from "geolib";
 import React, { useEffect, useRef, useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
@@ -39,7 +40,7 @@ export default function Map() {
         rotateEnabled  
         >
       
-          <Marker coordinate={{latitude: position.latitude,
+		<Marker coordinate={{latitude: position.latitude,
                   longitude: position.longitude}}
                   title={"title"}
                   description={"description"}
@@ -69,7 +70,7 @@ export default function Map() {
         <Text>RESET</Text>
       </Pressable>
 
-      <Pressable style={styles.recenter} onPress={ async ()=>{
+		<Pressable style={styles.recenter} onPress={ async ()=>{
           const userLocation = await getUserLocation();
           if(userLocation){
             setUserPosition(userLocation);
@@ -78,18 +79,12 @@ export default function Map() {
               longitude: userLocation.longitude,
               latitudeDelta:zoom,
               longitudeDelta:zoom
-            }, 500);
-            
-          }
-        
+            }, 500);}}
+		}>
+			<Image source={require("@/assets/images/recenter.png")} style={{ width: 30, height: 30 }}/>
+		</Pressable>
 
-          
-      }
-
-
-      }>
-        <Image source={require("@/assets/images/recenter.png")} style={{ width: 30, height: 30 }}/>
-      </Pressable>
+		<Text style={styles.distance}>{getDistance(position, userPosition)}m</Text>
 
     </View>
   );
@@ -119,8 +114,8 @@ const styles = StyleSheet.create({
     backgroundColor:"white",
     borderWidth:1,
     position:"absolute",
-    width: 50,   // plus grand
-    height: 40,  // plus grand
+    width: 50,   
+    height: 40, 
     alignItems:"center",
     justifyContent:"center",
     left:25,
@@ -129,8 +124,8 @@ const styles = StyleSheet.create({
   recenter:{
     borderWidth:1,
     position:"absolute",
-    width: 50,   // plus grand
-    height: 40,  // plus grand
+    width: 50,   
+    height: 40,  
     alignItems:"center",
     justifyContent:"center",
     right:25,
@@ -154,6 +149,17 @@ const styles = StyleSheet.create({
     height: 10,
     borderRadius : 5,
     backgroundColor:"blue"
+  },
+  distance:{
+    position:"absolute",
+    width: 150,  
+    height: 60, 
+	fontSize:40,
+	textAlign:"center",
+	textAlignVertical:"center",
+	backgroundColor:"white",
+    right:0,
+
   }
 });
 

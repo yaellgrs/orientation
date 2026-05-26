@@ -22,3 +22,5 @@ export async function getUserLocation(){
             return { latitude: 49.20455850994528, longitude: -0.36739465028753276, };
           }
 }
+
+//d=2Rarcsin(sin2(2φ2​−φ1​​)+cos(φ1​)cos(φ2​)sin2(2λ2​−λ1​​))
