@@ -20,15 +20,62 @@ export default function Map() {
   useEffect(() => { ... })    
   */
   useEffect(() => { //equivalent d'un awake
-    (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') return;
 
-        const userLocation = await getUserLocation();
-        if(userLocation) setPosition(getNextPoint(userLocation));
-        if(userLocation) setUserPosition(userLocation);
-    })();
+    let subscription: Location.LocationSubscription;
+    const start = async () => {
+
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") return;
+
+      subscription = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 1000,
+          distanceInterval: 1,
+        },
+        (location) => {
+          console.log("new pos");
+
+          const userLocation = {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+          };
+
+          console.log(userLocation);
+
+          setUserPosition(userLocation);
+        }
+      );
+    };
+
+    start();
+
+
+      return () => {
+        if (subscription) {
+          subscription.remove();
+        }
+      };
   }, []);
+
+  useEffect(()=>{
+    let animationFrame: number;
+    const update = () =>{
+      const distance = getDistance(position, userPosition);
+
+      if(distance < 5) {
+        setPosition(getNextPoint(position));
+        console.log("next point");
+      }
+
+      animationFrame = requestAnimationFrame(update);
+    }
+
+    update();
+
+    return () => cancelAnimationFrame(animationFrame);
+
+  }, [])
 
   return (
     <View style={styles.container}>
@@ -89,6 +136,7 @@ export default function Map() {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -162,6 +210,7 @@ const styles = StyleSheet.create({
 
   }
 });
+
 
 const markersGoogle = [
   {
