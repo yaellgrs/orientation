@@ -12,7 +12,13 @@ export default function Map() {
   const [position, setPosition] = useState({latitude : 49.20455850994528, longitude:  -0.36739465028753276});
   const [userPosition, setUserPosition] = useState({latitude : 49.20455850994528, longitude:  -0.36739465028753276});
 
+  const positionRef = useRef(position);
   const mapRef = useRef(null);
+
+  useEffect(() => {
+  positionRef.current = position;
+}, [position]);
+
 
   /*
   useEffect(() => { ... }, [])        // une seule fois au montage  = Awake/Start
@@ -41,9 +47,20 @@ export default function Map() {
             longitude: location.coords.longitude,
           };
 
-          console.log(userLocation);
 
           setUserPosition(userLocation);
+
+          const distance = getDistance(positionRef.current, userLocation);
+          
+          console.log(" next ? " + (distance <= 1000) + " : " +distance);
+          if(distance <= 1000) {
+            console.log("distance reach : " + distance);
+          setPosition(prev => getNextPoint(prev));
+            console.log("next point");
+          }
+
+
+
         }
       );
     };
@@ -58,24 +75,6 @@ export default function Map() {
       };
   }, []);
 
-  useEffect(()=>{
-    let animationFrame: number;
-    const update = () =>{
-      const distance = getDistance(position, userPosition);
-
-      if(distance < 5) {
-        setPosition(getNextPoint(position));
-        console.log("next point");
-      }
-
-      animationFrame = requestAnimationFrame(update);
-    }
-
-    update();
-
-    return () => cancelAnimationFrame(animationFrame);
-
-  }, [])
 
   return (
     <View style={styles.container}>
