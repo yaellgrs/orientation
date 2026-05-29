@@ -130,6 +130,20 @@ export default function Map() {
 			<Image source={require("@/assets/images/recenter.png")} style={{ width: 30, height: 30 }}/>
 		</Pressable>
 
+    		<Pressable style={styles.target} onPress={() =>{
+            mapRef.current?.animateToRegion({
+              latitude: positionRef.current.latitude,
+              longitude: positionRef.current.longitude,
+              latitudeDelta:zoom,
+              longitudeDelta:zoom
+            }, 500);
+        }
+
+
+		}>
+			<Image source={require("@/assets/images/target.png")} style={{ width: 30, height: 30 }}/>
+		</Pressable>
+
 		<Text style={styles.distance}>{getDistance(position, userPosition)}m</Text>
 
     </View>
@@ -177,6 +191,16 @@ const styles = StyleSheet.create({
     justifyContent:"center",
     right:25,
     bottom:60,
+  },
+    target:{
+    borderWidth:1,
+    position:"absolute",
+    width: 50,   
+    height: 40,  
+    alignItems:"center",
+    justifyContent:"center",
+    right:25,
+    bottom:120,
   },
   outerUserCircle:{
     width : 20,
